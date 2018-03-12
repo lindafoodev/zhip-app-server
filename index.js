@@ -26,7 +26,7 @@ app.use(
 );
 
 //see all users for testing - server side only - run through postman or localhost: 8080
-app.get('/users', (req, res) => {
+app.get('/api/users', (req, res) => {
     User.find({})
        .then(user => {
             res.json(user);
@@ -38,7 +38,7 @@ app.get('/users', (req, res) => {
 });
  
 //see all transactions for testing - server side only - run through postman or localhost: 8080
-app.get('/transactions', (req, res) => {
+app.get('/api/transactions', (req, res) => {
     Transaction.find({})
         .then(transaction => {
             res.json(transaction);
@@ -50,7 +50,7 @@ app.get('/transactions', (req, res) => {
 });
 
 //get one users balance
-app.get('/user/balance/:id', (req, res) => {
+app.get('/api/user/balance/:id', (req, res) => {
     const userId =  req.params.id;
 
     User.findById(userId)
@@ -64,7 +64,7 @@ app.get('/user/balance/:id', (req, res) => {
 });
 
 //see all transactions info for user
-app.get('/activity/:id', (req, res) => {
+app.get('/api/activity/:id', (req, res) => {
     const userId = req.params.id;
 
     Transaction.find({ $or: [{userIdInitiator: userId}, {userIdClaimer: userId}]})
@@ -83,7 +83,7 @@ app.get('/activity/:id', (req, res) => {
 });
    
 //new user provides id and starting accountbalance of 1000 for demo purposes
-app.post('/user/new', (req, res) => {
+app.post('/api/user/new', (req, res) => {
     User.create({accountBalance: 1000})
         .then(user => {
             if (user) {
@@ -94,7 +94,7 @@ app.post('/user/new', (req, res) => {
 });
 
 //sending user inputs userIdInitiator and transactionAmount => capture via req.body
-app.post('/transaction/send', jsonParser, (req, res) => {
+app.post('/api/transaction/send', jsonParser, (req, res) => {
     /***** Never trust users - validate input *****/
     const requiredFields = ['transactionAmount', 'userIdInitiator'];
     
@@ -126,7 +126,7 @@ app.post('/transaction/send', jsonParser, (req, res) => {
 });
 
 //updates sending users account to reflect deduction based on IOU amount
-app.put('/account/send', jsonParser, (req, res) => {
+app.put('/api/account/send', jsonParser, (req, res) => {
     const id = req.body.userIdInitiator;
     const amount = req.body.transactionAmount;
 
@@ -159,7 +159,7 @@ app.put('/account/send', jsonParser, (req, res) => {
 });
 
 //updates transaction to reflect claim to IOU by claiming user
-app.put('/transaction/receive/:transactionId', jsonParser , (req, res) => {
+app.put('/api/transaction/receive/:transactionId', jsonParser , (req, res) => {
     const transId = req.params.transactionId;
     const id = req.body.userIdClaimer;
 
@@ -186,7 +186,7 @@ app.put('/transaction/receive/:transactionId', jsonParser , (req, res) => {
 }); 
 
 //updates claiming user account based on addition of IOU credit
-app.put('/account/receive/:transactionId', (req, res) => {
+app.put('/api/account/receive/:transactionId', (req, res) => {
     const id = req.body.userIdClaimer;
     //have to find const amount = req.body.transactionAmount;
     const transId = req.params.transactionId;
