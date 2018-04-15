@@ -5,7 +5,6 @@ const bodyParser = require('body-parser');
 const jsonParser = bodyParser.json();
 const {Transaction, User}  = require('./database/model');
 
-
 const {PORT, CLIENT_ORIGIN} = require('./config');
 const {dbConnect} = require('./db-mongoose');
 
