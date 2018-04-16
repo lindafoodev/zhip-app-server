@@ -129,7 +129,7 @@ router.post('/', jsonParser, (req, res) => {
 		})
 		.then(user => {
       if(user) {
-			console.log('user back from create = ', user);
+			console.log('Hello user is now serialized?', user);
       return res.status(201).json(user.serialize());
       }
 		})
