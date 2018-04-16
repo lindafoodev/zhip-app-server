@@ -218,5 +218,4 @@ router.put('/account/send', jsonParser, jwtAuth, (req, res) => {
   });  // error handler
 });
 
-
 module.exports = {router};
