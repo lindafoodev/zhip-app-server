@@ -1,3 +1,5 @@
+//future build - if user logged in (find by username, get id, however, id not displayed to user, using id - then can update transaction and send info)
+
 'use strict';
 const express = require('express');
 const bodyParser = require('body-parser');
@@ -25,8 +27,8 @@ router.get('/transactions', (req, res) => {
       }); //error handler
 });
 
-//sending user inputs userIdInitiator and transactionAmount => capture via req.body
-router.post('/transaction/send', jwtAuth, jsonParser, (req, res) => {
+//sending user inputs userIdInitiator and transactionAmount => capture via req.body, user intentionally not required to login
+router.post('/transaction/send', jsonParser, (req, res) => {
   /***** Never trust users - validate input *****/
   const requiredFields = ['transactionAmount', 'userIdInitiator'];
   
@@ -57,7 +59,7 @@ router.post('/transaction/send', jwtAuth, jsonParser, (req, res) => {
   }); // error handler
 });
 
-//updates transaction to reflect claim to IOU by claiming user
+//updates transaction to reflect claim to IOU by claiming user, user intentionally not required to login
 router.put('/transaction/receive/:transactionId', jsonParser , (req, res) => {
   const transId = req.params.transactionId;
   const id = req.body.userIdClaimer;
@@ -84,7 +86,7 @@ router.put('/transaction/receive/:transactionId', jsonParser , (req, res) => {
       });
 }); 
 
-//updates claiming user account based on addition of IOU credit
+//updates claiming user account based on addition of IOU credit, user intentionally not required to be logged in
 router.put('/account/receive/:transactionId', (req, res) => {
   const id = req.body.userIdClaimer;
   //have to find const amount = req.body.transactionAmount;
@@ -122,9 +124,9 @@ router.put('/account/receive/:transactionId', (req, res) => {
   });
 });
 
-//see all transactions info for user
-router.get('/activity/:id', (req, res) => {
-  const userId = req.params.id;
+//see all transactions info for user, user required to be logged in
+router.get('/activity', jwtAuth, (req, res) => {
+  const userId = req.user.id;
 
   Transaction.find({ $or: [{userIdInitiator: userId}, {userIdClaimer: userId}]})
       .then(transactions => {
@@ -140,5 +142,52 @@ router.get('/activity/:id', (req, res) => {
           res.status(500).json({message: 'Internal Server Error'}); // error handler
       }); //error handler
 });
+
+//get one users balance, user required to be logged in
+router.get('/balance', jwtAuth, (req, res) => {
+    const userId =  req.user.id;
+  
+    User.findById(userId)
+       .then(user => {
+            res.json(user);
+       })
+       .catch(err =>{
+           console.error(err);
+           res.status(500).json({message: 'Internal Server Error'});
+       }); //error handler
+  });
+  
+  //updates sending users account to reflect deduction based on IOU amount, user intentionally not required to be logged in
+  router.put('/account/send', jsonParser, (req, res) => {
+    const id = req.body.userIdInitiator;
+    const amount = req.body.transactionAmount;
+  
+     /***** Never trust users - validate input *****/
+    const requiredFields = ['userIdInitiator', 'transactionAmount'];
+  
+    const missingFields = requiredFields.filter(field => !(field in req.body));
+  
+    User.findById(id)
+        .then(account => {
+            if (parseInt(account.accountBalance, 10) >= parseInt(amount, 10)) { 
+            let newBalance = parseInt(account.accountBalance, 10) - parseInt(amount, 10);
+                User.findByIdAndUpdate(id, {accountBalance: newBalance}, {new: true})
+                    .then( update => { 
+                        if (update) {
+                        res.json(update); 
+                        }
+                        else {
+                            res.status(404).end(); // 404 handler
+                        }
+                    })
+                }
+            else {
+                res.status(404).end(); // 404 handler
+            }
+        })
+    .catch(err => {
+        res.status(500).send({message: 'Internal Server Error'});
+    });  // error handler
+  });
 
 module.exports = { router };
