@@ -124,7 +124,6 @@ router.post('/', jsonParser, (req, res) => {
 			return User.create({
 				username,
 				password: hash,
-				accountBalance: 1000
 			});
 		})
 		.then(user => {

@@ -15,14 +15,16 @@ const userSchema = new mongoose.Schema({
 		type: String,
 		required: true
 	},
-  accountBalance: {type: Number, default: 1000},
+	accountBalance: {type: Number, default: 1000},
+	isFirstTimeUser: {type: Boolean, default: true}
 });
 
 userSchema.methods.serialize = function() {
   return {
     id: this._id,
     username: this.username,
-    accountBalance: this.accountBalance
+		accountBalance: this.accountBalance,
+		isFirstTimeUser: this.isFirstTimeUser
   };
 };
 

@@ -8,7 +8,7 @@ const { Transaction } = require('./models');
 const { User } = require('../users/models');
 const { localStrategy, jwtStrategy } = require('../auth/strategies');
 const router = express.Router();
-router.use(bodyParser.json());
+const jsonParser = bodyParser.json();
 
 passport.use(localStrategy);
 passport.use(jwtStrategy);

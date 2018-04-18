@@ -18,6 +18,7 @@ transactionSchema.methods.serialize = function() {
   return {
     id: this._id,
     transactionAmount: this.transactionAmount,
+    isIOUClaimed: this.isIOUClaimed
   };
 };
 
