@@ -28,6 +28,13 @@ userSchema.methods.serialize = function() {
   };
 };
 
+userSchema.methods.secureSerialize = function() {
+  return {
+		username: this.username,
+		isFirstTimeUser: this.isFirstTimeUser
+  };
+};
+
 userSchema.methods.validatePassword = function(password) {
 	return bcrypt.compare(password, this.password);
 };

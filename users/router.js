@@ -173,15 +173,9 @@ router.get('/users', (req, res) => {
 //updates user's isFirstTimeUser prop from true to false so we no longer display Zhip ID to user after initially providing upon registration (added security)
 router.put('/return', jwtAuth, (req, res) => {
   const id = req.user.id;
-	User.findByIdandUpdate(id, {
-		$set: {
-			isFirstTimeUser: false
-		}
-	},
-		{ new: true}
-	)
+	User.findByIdAndUpdate(id, {isFirstTimeUser: false},{ new: true})
 	.then(user => {
-		res.json(user);
+		 res.status(201).json(user.secureSerialize());
 	})
 	.catch(err => {
 			res.status(500).send({message: 'Internal Server Error'}); // error handler
