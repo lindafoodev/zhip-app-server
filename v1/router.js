@@ -157,37 +157,37 @@ router.get('/balance', jwtAuth, (req, res) => {
        }); //error handler
   });
   
-  //updates sending users account to reflect deduction based on IOU amount, user intentionally not required to be logged in
-  router.put('/account/send', jsonParser, (req, res) => {
-    const id = req.body.userIdInitiator;
-    const amount = req.body.transactionAmount;
-  
-     /***** Never trust users - validate input *****/
-    const requiredFields = ['userIdInitiator', 'transactionAmount'];
-  
-    const missingFields = requiredFields.filter(field => !(field in req.body));
-  
-    User.findById(id)
-        .then(account => {
-            if (parseInt(account.accountBalance, 10) >= parseInt(amount, 10)) { 
-            let newBalance = parseInt(account.accountBalance, 10) - parseInt(amount, 10);
-                User.findByIdAndUpdate(id, {accountBalance: newBalance}, {new: true})
-                    .then( update => { 
-                        if (update) {
-                        res.json(update); 
-                        }
-                        else {
-                            res.status(404).end(); // 404 handler
-                        }
-                    })
-                }
-            else {
-                res.status(404).end(); // 404 handler
+//updates sending users account to reflect deduction based on IOU amount, user intentionally not required to be logged in
+router.put('/account/send', jsonParser, (req, res) => {
+const id = req.body.userIdInitiator;
+const amount = req.body.transactionAmount;
+
+    /***** Never trust users - validate input *****/
+const requiredFields = ['userIdInitiator', 'transactionAmount'];
+
+const missingFields = requiredFields.filter(field => !(field in req.body));
+
+User.findById(id)
+    .then(account => {
+        if (parseInt(account.accountBalance, 10) >= parseInt(amount, 10)) { 
+        let newBalance = parseInt(account.accountBalance, 10) - parseInt(amount, 10);
+            User.findByIdAndUpdate(id, {accountBalance: newBalance}, {new: true})
+                .then( update => { 
+                    if (update) {
+                    res.json(update); 
+                    }
+                    else {
+                        res.status(404).end(); // 404 handler
+                    }
+                })
             }
-        })
-    .catch(err => {
-        res.status(500).send({message: 'Internal Server Error'});
-    });  // error handler
-  });
+        else {
+            res.status(404).end(); // 404 handler
+        }
+    })
+.catch(err => {
+    res.status(500).send({message: 'Internal Server Error'});
+});  // error handler
+});
 
 module.exports = { router };

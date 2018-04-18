@@ -17,7 +17,7 @@ const jwtAuth = passport.authenticate('jwt', { session: false });
 
 // Post to register a new user
 router.post('/', jsonParser, (req, res) => {
-	console.log('Enter users/ POST ', req.body);
+	console.log('Enter /users POST ', req.body);
 	const requiredFields = ['username', 'password'];
 	const missingField = requiredFields.find(field => !(field in req.body));
 
@@ -169,5 +169,24 @@ router.get('/users', (req, res) => {
          res.status(500).json({message: 'Internal Server Error'});
      }); //error handler
 });
+
+//updates user's isFirstTimeUser prop from true to false so we no longer display Zhip ID to user after initially providing upon registration (added security)
+router.put('/return', jwtAuth, (req, res) => {
+  const id = req.user.id;
+	User.findByIdandUpdate(id, {
+		$set: {
+			isFirstTimeUser: false
+		}
+	},
+		{ new: true}
+	)
+	.then(user => {
+		res.json(user);
+	})
+	.catch(err => {
+			res.status(500).send({message: 'Internal Server Error'}); // error handler
+	});
+}); 
+
 
 module.exports = {router};
