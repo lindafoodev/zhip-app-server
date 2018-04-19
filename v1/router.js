@@ -29,6 +29,7 @@ router.get('/transactions', (req, res) => {
 
 //sending user inputs userIdInitiator and transactionAmount => capture via req.body, user intentionally not required to login
 router.post('/transaction/send', jsonParser, (req, res) => {
+    console.log('are we in here');
   /***** Never trust users - validate input *****/
   const requiredFields = ['transactionAmount', 'userIdInitiator'];
   
