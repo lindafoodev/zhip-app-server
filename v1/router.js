@@ -28,7 +28,7 @@ router.get('/transactions', (req, res) => {
 });
 
 //sending user inputs userIdInitiator and transactionAmount => capture via req.body, user intentionally not required to login
-router.post('/transaction/send', jsonParser, (req, res) => {
+router.post('/transaction/create', jsonParser, (req, res) => {
     console.log('are we in here');
   /***** Never trust users - validate input *****/
   const requiredFields = ['transactionAmount', 'userIdInitiator'];
@@ -60,8 +60,44 @@ router.post('/transaction/send', jsonParser, (req, res) => {
   }); // error handler
 });
 
+//sending user inputs transactionAmount - user is logged in
+router.post('/transaction/initiate',jsonParser, jwtAuth, (req, res) => {
+    const userIdInitiator = req.user.id; console.log('are we in here');
+
+  /***** Never trust users - validate input *****/
+  const requiredFields = ['transactionAmount'];
+
+  
+  const missingFields = requiredFields.filter(field => !(field in req.body)); 
+
+  const { transactionAmount } = req.body;
+
+  const intAmount = parseInt(transactionAmount, 10);
+
+  const newTransaction = {userIdInitiator, transactionAmount: intAmount};
+
+  User.findById(userIdInitiator)
+      .then(account => {
+          if((parseInt(account.accountBalance, 10) > 0) && (parseInt(account.accountBalance, 10) >= intAmount)) { //checks that user has enough in account balance to perform transaction
+              Transaction.create(newTransaction)
+                  .then(sendAmount => {
+                      if (sendAmount) {
+                      res.json(sendAmount);
+                      }
+                  })
+              }   
+          else {
+          res.status(404).end(); // 404 handler
+          }
+      })
+  .catch(err => {
+      res.status(500).send({message: 'Internal Server Error'});
+  }); // error handler
+});
+
+//YOLLO
 //updates transaction to reflect claim to IOU by claiming user, user intentionally not required to login
-router.put('/transaction/receive/:transactionId', jsonParser , (req, res) => {
+router.put('/transaction/claim/:transactionId', jsonParser , (req, res) => {
   const transId = req.params.transactionId;
   const id = req.body.userIdClaimer;
 
@@ -88,7 +124,7 @@ router.put('/transaction/receive/:transactionId', jsonParser , (req, res) => {
 }); 
 
 //updates claiming user account based on addition of IOU credit, user intentionally not required to be logged in
-router.put('/account/receive/:transactionId', (req, res) => {
+router.put('/account/claim/:transactionId', jsonParser, (req, res) => {
   const id = req.body.userIdClaimer;
   //have to find const amount = req.body.transactionAmount;
   const transId = req.params.transactionId;
