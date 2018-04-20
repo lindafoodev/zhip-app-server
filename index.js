@@ -9,7 +9,7 @@ const {dbConnect} = require('./db-mongoose');
 const app = express();
 
 const { router: usersRouter } = require('./users');
-const { router: authRouter, localStrategy, jwtStrategy } = require('./auth');
+const { router: authRouter } = require('./auth');
 const { router: v1Router } = require('./v1');
 const {localStrategy, jwtStrategy} = require('./auth/strategies');
 
