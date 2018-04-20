@@ -1,45 +1,268 @@
-# Thinkful Backend Template
+<h1 align="center">
+  <br>
+  Zhip
+  <br>
+</h1>
 
-A template for developing and deploying Node.js apps.
+<h4 align="center">Exchange IOUs with anyone else using a generated URL link.</h4>
 
-## Getting started
+<p align="center">
+    <a href="#key-features">Key Features</a> •
+    <a href="#setup">Setup</a> •
+    <a href="#usage">Usage</a> •
+    <a href="#screenshots">Screenshots</a> •
+    <a href="#documentation">Documentation</a> •
+    <a href="#history">History</a> •
+    <a href="#technology-stack-credits">Technology Stack Credits</a> •
+</p>
 
-### Setting up a project
+---
+Zhip is a web application to send and receive IOUs between individuals reliably and securely using a generated URL link.
 
-* Move into your projects directory: `cd ~/YOUR_PROJECTS_DIRECTORY`
-* Clone this repository: `git clone https://github.com/Thinkful-Ed/backend-template YOUR_PROJECT_NAME`
-* Move into the project directory: `cd YOUR_PROJECT_NAME`
-* Install the dependencies: `npm install`
-* Create a new repo on GitHub: https://github.com/new
-    * Make sure the "Initialize this repository with a README" option is left unchecked
-* Update the remote to point to your GitHub repository: `git remote set-url origin https://github.com/YOUR_GITHUB_USERNAME/YOUR_REPOSITORY_NAME`
+![homepage screenshot](./screenshots/zhiphome.png)
 
-### Working on the project
+---
+## Key Features
++ Register a secured Zhip account
++ Receive a secured Zhip ID
++ Create IOUs 
+    - using a secured Zhip ID
+    - without using a secured Zhip ID (access through user account)
++ Obtain a securely generated unique URL link
+    - Can be given to any individual, anonymously
++ Claim IOUs
+    - using a secured Zhip ID
++ Check IOU balance
+    - access through user account 
++ Check IOU activity
+    - access through user account
++ Access registered Zhip account
+---
 
-* Move into the project directory: `cd ~/YOUR_PROJECTS_DIRECTORY/YOUR_PROJECT_NAME`
-* Run the development task: `npm start`
-    * Starts a server running at http://localhost:8080
-    * Automatically restarts when any of your files change
+## Setup
 
-## Databases
+To clone and run this application, you'll need [Git](https://git-scm.com), [Node.js](https://nodejs.org/en/download/) (which comes with [npm](http://npmjs.com)), [MongoDB](https://www.mongodb.com/download-center#atlas) installed on your computer. 
 
-By default, the template is configured to connect to a MongoDB database using Mongoose.  It can be changed to connect to a PostgreSQL database using Knex by replacing any imports of `db-mongoose.js` with imports of `db-knex.js`, and uncommenting the Postgres `DATABASE_URL` lines in `config.js`.
+From your command line:
 
-## Deployment
+```bash
+# In seperate terminals, clone these repository
+$ git clone https://github.com/lindafoodev/zhip-app-client.git
+$ git clone https://github.com/lindafoodev/zhip-app-server.git
 
-Requires the [Heroku CLI client](https://devcenter.heroku.com/articles/heroku-command-line).
+# In seperate terminals, go into the repositories
+$ cd zhip-app-client
+$ cd zhip-app-server
 
-### Setting up the project on Heroku
+# Install dependencies
+$ npm install
 
-* Move into the project directory: `cd ~/YOUR_PROJECTS_DIRECTORY/YOUR_PROJECT_NAME`
-* Create the Heroku app: `heroku create PROJECT_NAME`
+# In server repository, run mongod instance on localhost (Seperate Terminal)
+$ mongod
 
-* If your backend connects to a database, you need to configure the database URL:
-    * For a MongoDB database: `heroku config:set DATABASE_URL=mongodb://USERNAME:PASSWORD@HOST:PORT/DATABASE_NAME`
-    * For a PostgreSQL database: `heroku config:set DATABASE_URL=postgresql://USERNAME:PASSWORD@HOST:PORT/DATABASE_NAME`
+# In both repositories, run the app
+$ npm start
+```
+---
+## Usage
+After you clone this repo to your desktop, go to its root directory and run npm install to install its dependencies.
 
-* If you are creating a full-stack app, you need to configure the client origin: `heroku config:set CLIENT_ORIGIN=https://www.YOUR_DEPLOYED_CLIENT.com`
+Once the dependencies are installed, run an instance of mongod. Then, you can run npm start to start the application. You will be able to access the server at localhost:8080 and the client at localhost:3000
 
-### Deploying to Heroku
+---
+## Screenshots
+<h3 align="center">
+  <br>
+  Register a Zhip Account
+  <br>
+</h3>
 
-* Push your code to Heroku: `git push heroku master`
+![borrow screenshot](./screenshots/zhipregister.png)
+
+<h3 align="center">
+  <br>
+  Receive Secured Zhip ID
+  <br>
+</h3>
+
+![return screenshot](./screenshots/zhipid.png)
+
+<h3 align="center">
+  <br>
+  Create IOU - w/Zhip ID
+  <br>
+</h3>
+
+![add item screenshot](./screenshots/zhipcreateid.png)
+
+<h3 align="center">
+  <br>
+  Create IOU - w/Zhip account
+  <br>
+</h3>
+
+![edit item screenshot](./screenshots/zhipcreateaccess.png)
+
+<h3 align="center">
+  <br>
+  Obtain generated URL link for IOU 
+  <br>
+</h3>
+
+![delete item screenshot](./screenshots/zhipclaimlink.png)
+
+<h3 align="center">
+  <br>
+  Claim IOU
+  <br>
+</h3>
+
+![claim item screenshot](./screenshots/zhipclaimiou.png)
+
+<h3 align="center">
+  <br>
+  Check IOU Balance
+  <br>
+</h3>
+
+![claim item screenshot](./screenshots/zhipbalance.png)
+
+<h3 align="center">
+  <br>
+  Check IOU Activity
+  <br>
+</h3>
+
+![claim item screenshot](./screenshots/zhipactivity.png)
+
+<h3 align="center">
+  <br>
+  Access Registered Zhip Account
+  <br>
+</h3>
+
+![claim item screenshot](./screenshots/zhiplogin.png)
+
+---
+## Documentation
+#### Model
+
+* `user` The User object models the users in the Users database for REST API.
+  * `username` {string} Unique username provided by user on account registration
+  * `password` {string} Unique password provided by user on account registration, hashed
+  * `accountBalance` {number} IOU balance for User, user initially given 1000 IOUs to start
+  * `isFirstTimeUser` {boolean} Used to track if user is accessing Zhip for the first time or not. Enhanced security, to determine whether Zhip ID is shown to user or not.
+
+* `transaction` The Transaction object models the transactions in the Transactions database for REST API.  
+  * `userIdInitiator` {string} Capture the user who created the IOU
+  * `userIdClaimor` {string} Capture the user who claims the IOU
+  * `transactionAmount` {number} Designate the IOU amount
+  * `isIOUClaimed` {boolean} Designate whether the IOU has been claimed yet
+
+#### REST API - Server
+
+* Auth Router:
+  * POST - /api/auth/login
+      Creates and returns a 'local' authorization token
+      Protected: Yes
+  * POST -/api/auth/refresh
+      Creates and returns a refreshed 'jwt' authorization token
+      Protected: Yes
+
+* User Router:
+  * POST - /api/users
+      Creates and returns a new user through application registration
+      Protected: No
+
+  * PUT - /api/users/return
+      Updates user to note user's first time accessing application 
+      Protected: Yes
+
+* v1 Router:
+  * POST - /api/v1/transaction/create
+      Creates a new transaction and returns the new IOU created, user not logged in
+      Protected: No
+
+  * POST - /api/v1/transaction/initiate
+      Creates a new transaction and returns the new IOU created, user logged in
+      Protected: Yes
+
+  * PUT - /api/v1/account/send
+      Updates user account to note IOU created
+      Protected: No
+
+  * PUT - /api/v1/transaction/claim/:transactionId
+      Updates transaction to note that IOU is claimed 
+      Protected: No
+
+  * PUT - /api/v1/account/claim/:transactionId
+      Updates user account to note IOU claimed 
+      Protected: No
+
+  * GET - /api/v1/activity
+      Retrieves and provides user IOU activity 
+      Protected: Yes
+
+  * GET - /api/v1/balance
+      Retrieves and provides user IOU balance 
+      Protected: Yes
+
+#### Components - Client
+  * App
+  * LandingPage
+  * Dashboard
+  * RegistrationPage
+  * LoginPage
+  * CreateForm
+  * CreateTransactionContainer
+  * InitiateForm
+  * InitiateTransactionContainer
+  * ClaimForm
+  * ClaimTransactionContainer
+  * BalanceContainer
+  * ActivityContainer
+  * LogOut
+  * DemoTag
+  * Sidebar
+  * HamburgerNav
+
+---
+## History - Client | Server
+* 2.1.0 | 2.1.0 - Update README
+* 2.0.1 - Add default navigation component height for styling
+* 2.0.0 | 2.0.0 - Add authentication and login functionality
+* 1.0.0 | 1.0.0 - Initial release
+
+---
+## Technology Stack Credits
+This software uses code from several open source packages.
+
+Front-end technologies
++ ES6 JavaScript
++ React/Redux
++ CSS media queries
+
+Server technologies
++ [Express](http://expressjs.com/)
++ [bcryptjs](https://www.npmjs.com/package/bcryptjs)
++ [jsonwebtoken](https://jwt.io/)
++ [passport.js](http://www.passportjs.org/)
+
+Data Persistence
++ [MongoDB](https://www.mongodb.com/)
++ [Mongoose](http://mongoosejs.com/)
+
+​Hosting/SaaS
++ [Heroku](https://dashboard.heroku.com/)
++ [MLab](https://mlab.com/)
+
+Development Environment
++ Continuous Deployment
+    - [Netlify](https://netlify.com/) / [Heroku](https://dashboard.heroku.com/)
++ [Github](https://github.com/) (branching, pull requests, merging)
++ [VS Code](https://code.visualstudio.com/)
++ [Node.js](https://nodejs.org/) Libraries
+    - [Nodemon](https://nodemon.io/)
+    - [dotenv](https://www.npmjs.com/package/dotenv)
+
+---
