@@ -16,6 +16,7 @@ passport.use(jwtStrategy);
 const jwtAuth = passport.authenticate('jwt', { session: false });
 
 //see all transactions for testing - server side only - run through postman or localhost: 8080
+//https://zhip.herokuapp.com/api/v1/transactions
 router.get('/transactions', (req, res) => {
   Transaction.find({})
       .then(transaction => {

@@ -159,6 +159,7 @@ router.post('/', jsonParser, (req, res) => {
 // });
 //test
 //see all users for testing - server side only - run through postman or localhost: 8080
+//https://zhip.herokuapp.com/api/users/users
 router.get('/users', (req, res) => {
   User.find({})
      .then(user => {
