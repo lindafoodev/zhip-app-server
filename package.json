@@ -1,6 +1,6 @@
 {
   "name": "thinkful-backend-template",
-  "version": "1.0.0",
+  "version": "2.0.0",
   "description": "Template for an Express backend",
   "main": "index.js",
   "scripts": {
