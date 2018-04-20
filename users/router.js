@@ -157,7 +157,7 @@ router.post('/', jsonParser, (req, res) => {
 // 		})
 // 		.catch(err => res.status(500).json({message: 'Internal server error'}));
 // });
-
+//test
 //see all users for testing - server side only - run through postman or localhost: 8080
 router.get('/users', (req, res) => {
   User.find({})
