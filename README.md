@@ -228,7 +228,8 @@ Once the dependencies are installed, run an instance of mongod. Then, you can ru
   * HamburgerNav
 
 ---
-## History - Client | Server
+## History
+* Client| Server
 * 2.1.0 | 2.1.0 - Update README
 * 2.0.1 - Add default navigation component height for styling
 * 2.0.0 | 2.0.0 - Add authentication and login functionality
