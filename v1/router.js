@@ -44,7 +44,7 @@ router.post('/transaction/create', jsonParser, (req, res) => {
 
   User.findById(userIdInitiator)
       .then(account => {
-          if((parseInt(account.accountBalance, 10) > 0) && (parseInt(account.accountBalance, 10) >= intAmount)) { //checks that user has enough in account balance to perform transaction
+          if((parseInt(account.accountBalance, 10) > 0) && (parseInt(account.accountBalance, 10) >= intAmount) && (intAmount >= 0)) { //checks that user has enough in account balance to perform transaction and intAmount is not negative
               Transaction.create(newTransaction)
                   .then(sendAmount => {
                       if (sendAmount) {
@@ -79,7 +79,7 @@ router.post('/transaction/initiate',jsonParser, jwtAuth, (req, res) => {
 
   User.findById(userIdInitiator)
       .then(account => {
-          if((parseInt(account.accountBalance, 10) > 0) && (parseInt(account.accountBalance, 10) >= intAmount)) { //checks that user has enough in account balance to perform transaction
+          if((parseInt(account.accountBalance, 10) > 0) && (parseInt(account.accountBalance, 10) >= intAmount) && (intAmount >= 0)) { //checks that user has enough in account balance to perform transaction
               Transaction.create(newTransaction)
                   .then(sendAmount => {
                       if (sendAmount) {
@@ -96,7 +96,6 @@ router.post('/transaction/initiate',jsonParser, jwtAuth, (req, res) => {
   }); // error handler
 });
 
-//YOLLO
 //updates transaction to reflect claim to IOU by claiming user, user intentionally not required to login
 router.put('/transaction/claim/:transactionId', jsonParser , (req, res) => {
   const transId = req.params.transactionId;
@@ -207,7 +206,7 @@ const missingFields = requiredFields.filter(field => !(field in req.body));
 
 User.findById(id)
     .then(account => {
-        if (parseInt(account.accountBalance, 10) >= parseInt(amount, 10)) { 
+        if ((parseInt(account.accountBalance, 10) >= parseInt(amount, 10)) && (amount >= 0)) { 
         let newBalance = parseInt(account.accountBalance, 10) - parseInt(amount, 10);
             User.findByIdAndUpdate(id, {accountBalance: newBalance}, {new: true})
                 .then( update => { 
